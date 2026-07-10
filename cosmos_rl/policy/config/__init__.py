@@ -1518,6 +1518,18 @@ class RolloutConfig(BaseModel):
         ),
     )
 
+    prefetch_depth: int = Field(
+        default=1,
+        description=(
+            "How many prompt batches the prefetch loop keeps buffered in "
+            "_prompt_queue (and speculatively enqueued to the backend). The "
+            "default of 1 preserves the historical fetch-one-batch-ahead "
+            "behavior. Raising it decouples in-flight work from batch_size: "
+            "e.g. batch_size=1 with prefetch_depth=8 delivers per-prompt "
+            "arrivals while keeping long-running simulation backends "
+            "saturated. Only meaningful when prefetch_rollout is true."
+        ),
+    )
     prefetch_rollout: bool = Field(
         default=False,
         description=(

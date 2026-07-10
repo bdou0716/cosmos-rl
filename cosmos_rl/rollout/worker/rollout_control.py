@@ -2146,8 +2146,11 @@ class DisaggregatedRolloutControlWorker(RolloutWorkerBase):
                 continue
             if self.state.prompt_fetch_end():
                 continue
+            prefetch_depth = max(
+                1, int(getattr(self.config.rollout, "prefetch_depth", 1))
+            )
             with self._prompt_fetch_lock:
-                if not self._prompt_queue.empty():
+                if self._prompt_queue.qsize() >= prefetch_depth:
                     continue
                 # ``parallel_dims.mesh["dp"]`` is not reliably resolvable
                 # from a background thread; prefetch_rollout requires DP=1
